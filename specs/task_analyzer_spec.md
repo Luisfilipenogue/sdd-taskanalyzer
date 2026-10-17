@@ -1,6 +1,6 @@
 # Especificação SDD — TaskAnalyzer
 
-> Contrato de negócio executável. Reconstituído a partir da Fase 1; ajuste aos termos exatos da sua especificação do Google Docs, se houver diferença.
+> Contrato de negócio executável do TaskAnalyzer, definido para a Fase 2 deste projeto. É a fonte de verdade para o código e para o Test Harness.
 
 ## 1. Objetivo
 Analisar uma lista de tarefas e devolver métricas de produtividade.
