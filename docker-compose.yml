@@ -1,0 +1,5 @@
+services:
+  tests:
+    build: .
+    image: sdd-taskanalyzer-tests
+    container_name: sdd-taskanalyzer-tests

@@ -1,0 +1,46 @@
+# Requisitos funcionais e de qualidade do TaskAnalyzer (derivados de task_analyzer_spec.md)
+projeto: sdd-taskanalyzer
+versao: "1.0"
+funcao_principal: "analyze_tasks(tasks: list[dict]) -> dict"
+excecao: TaskValidationError
+
+entrada:
+  campos_obrigatorios: [id, prioridade, data_criacao, data_conclusao]
+  campos_opcionais: [prazo]
+  prioridades_validas: [alta, media, baixa]
+  formato_datas: "datetime ou string ISO 8601"
+
+saida:
+  chaves:
+    - total_tarefas
+    - total_concluidas
+    - total_pendentes
+    - tempo_medio_conclusao_horas
+    - tempo_medio_por_prioridade
+    - taxa_atraso_percentual
+  arredondamento_casas: 2
+
+regras_validacao:
+  - entrada deve ser uma lista de dicionarios
+  - campos obrigatorios devem existir
+  - prioridade dentro do dominio
+  - datas em formato valido
+  - data_conclusao nao pode ser anterior a data_criacao
+
+requisitos_qualidade:
+  python_minimo: "3.11"
+  type_hints: "100%"
+  divisao_por_zero: retornar 0.0
+  bibliotecas_externas_producao: nenhuma
+  mutacao_da_entrada: proibida
+
+cenarios_aceite:
+  - id: 1
+    nome: Sucesso
+    esperado: totais, medias e taxa de atraso corretos
+  - id: 2
+    nome: Datas inconsistentes
+    esperado: TaskValidationError
+  - id: 3
+    nome: Bordas (lista vazia, somente pendentes, sem prazo)
+    esperado: medias 0.0 e taxa 0.0 sem excecao

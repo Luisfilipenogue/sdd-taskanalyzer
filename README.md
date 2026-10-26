@@ -1,52 +1,55 @@
 # sdd-taskanalyzer
 
-![tests](https://img.shields.io/badge/pytest-100%25%20passed-brightgreen)
+[![CI](https://github.com/Luisfilipenogue/sdd-taskanalyzer/actions/workflows/ci.yml/badge.svg)](https://github.com/Luisfilipenogue/sdd-taskanalyzer/actions/workflows/ci.yml)
 
-Projeto da disciplina **Bootcamp III** — desenvolvimento orientado a especificação (SDD) com IA, Test Harness e versionamento Git/GitHub.
+Projeto final do **Bootcamp III** — desenvolvimento orientado a especificação (SDD) com IA, Test Harness, CI/CD com GitHub Actions, containerização com Docker e governança ética de IA.
 
 O `TaskAnalyzer` recebe uma lista de tarefas e calcula métricas: totais, tempo médio de conclusão (geral e por prioridade) e taxa de atraso.
 
-## Estrutura
+## Arquitetura do repositório
 
 ```
 sdd-taskanalyzer/
-├── README.md
-├── CONTEXT_RULES.md          # regras de governança da IA
-├── .gitignore
+├── .github/workflows/ci.yml      # Pilar 1: pipeline CI (GitHub Actions)
+├── Dockerfile                    # Pilar 2: empacotamento (python:3.11-slim)
+├── docker-compose.yml            # Pilar 2: orquestração da suíte de testes
+├── CONTEXT_RULES.md              # Pilar 3: governança da IA
+├── specs/
+│   ├── task_analyzer_spec.md     # contrato SDD (cenários Dado-Quando-Então)
+│   ├── system_design_document.pdf
+│   └── requirements.yaml
+├── src/task_analyzer.py          # código gerado por IA e homologado por humano
+├── tests/test_harness.py         # suíte pytest (21 testes)
 ├── requirements.txt
-├── specs/task_analyzer_spec.md   # contrato SDD
-├── src/task_analyzer.py          # código gerado via IA e homologado por humano
-└── tests/test_harness.py         # suíte pytest (cenários 1, 2 e bordas)
+└── README.md
 ```
 
 ## Como executar
 
+### Local
 ```bash
 python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-pytest -v
+pytest tests/test_harness.py -v
 ```
 
-Requer Python 3.11+.
-
-## Exemplo
-
-```python
-from src.task_analyzer import analyze_tasks
-
-analyze_tasks([
-    {"id": 1, "prioridade": "alta", "data_criacao": "2026-01-01T08:00:00",
-     "data_conclusao": "2026-01-01T10:00:00", "prazo": "2026-01-01T12:00:00"},
-])
+### Docker (um único comando)
+```bash
+docker compose run --rm tests
 ```
+Para construir e executar passo a passo:
+```bash
+docker build -t sdd-taskanalyzer-tests .
+docker run --rm sdd-taskanalyzer-tests
+```
+
+## CI/CD
+
+O workflow `.github/workflows/ci.yml` roda em `ubuntu-latest` com Python 3.11 a cada **push** ou **pull request** nas branches `main` e `develop`: instala as dependências do `requirements.txt` e executa `pytest tests/test_harness.py -v`.
 
 ## Fluxo de trabalho
 
-- `main` protegida; mudanças entram via Pull Request.
-- Branches: `feature/sdd-specification`, `feature/test-harness`, `feature/task-analyzer-impl`.
-- Commits atômicos (`feat:`, `test:`, `docs:`).
-
-## Status do build
-
-Testes: **100% aprovados** (ver `pytest -v`). CI/CD será adicionado na Fase 3.
+- `main` recebe mudanças via Pull Request.
+- Branches de funcionalidade (`feature/*`), commits atômicos (`feat:`, `test:`, `docs:`, `ci:`, `build:`).
+- Código gerado por IA só entra após: testes 100% aprovados, revisão humana contra `CONTEXT_RULES.md` e PR documentado.
